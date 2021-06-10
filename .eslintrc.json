@@ -15,15 +15,17 @@
     "ecmaVersion": 12,
     "sourceType": "module"
   },
-  "plugins": ["react", "prettier"],
+  "plugins": ["react", "prettier", "react-hooks"],
   "rules": {
     "no-nested-ternary": 0,
     "linebreak-style": "off",
     "class-methods-use-this": "off",
+    "react/react-in-jsx-scope": "off",
     "max-lines": "warn",
     "no-param-reassign": "off",
     "no-undef": "warn",
-    "prettier/prettier": "error"
-  },
-  "import/extensions": ["error", "ignorePackages"]
+    "prettier/prettier": "error",
+    "react-hooks/rules-of-hooks": "error",
+    "react-hooks/exhaustive-deps": "warn"
+  }
 }
