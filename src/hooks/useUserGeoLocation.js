@@ -1,30 +1,31 @@
 import { useEffect, useState } from 'react';
 import { DEFAULT_LAT, DEFAULT_LON } from '../utils';
 
-export const useUserLocation = () => {
+// export const useUserGeoLocation = (userClicked) => {
+export const useUserGeoLocation = () => {
   const [location, setLocation] = useState({
-    loaded: false,
     coordinates: { lat: '', lon: '' },
+    loaded: false,
   });
 
   const onSuccess = location => {
     setLocation({
-      loaded: true,
       coordinates: {
         lat: location.coords.latitude,
         lon: location.coords.longitude,
       },
+      loaded: true,
     });
   };
 
   const onError = error => {
     setLocation({
-      loaded: true,
-      error,
       coordinates: {
         lat: DEFAULT_LAT,
         lon: DEFAULT_LON,
       },
+      error,
+      loaded: true,
     });
   };
 
@@ -45,6 +46,7 @@ export const useUserLocation = () => {
           onError();
       }
     });
+    // }, [userClicked]);
   }, []);
 
   return location;

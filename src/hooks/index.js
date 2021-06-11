@@ -1,2 +1,2 @@
 export * from './useRequest';
-export * from './useUserLocation';
+export * from './useUserGeoLocation';

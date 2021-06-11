@@ -12,6 +12,6 @@ export const getLocationUrl = (lat, lon) =>
 export const getWeatherByGeoLocationUrl = (lat, lon) =>
   `${API_DATA_BASE_URL}/onecall?lat=${lat}&lon=${lon}&exclude=minutely,hourly,alerts&units=metric&appid=${API_KEY}`;
 
-export const getIconUrl = iconCode => {
-  return `${ICONS_BASE_URL}/${iconCode}.png`;
+export const getIconUrl = (iconCode, isBig) => {
+  return `${ICONS_BASE_URL}/${iconCode}${isBig ? '@4x' : ''}.png`;
 };

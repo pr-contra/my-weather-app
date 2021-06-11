@@ -3,7 +3,7 @@ import PropTypes from 'prop-types';
 import { getIconUrl } from '../services';
 import { convertUnixTimeToDate } from '../utils/time';
 
-export const WeatherEntry = ({ weather }) => {
+export const Current = ({ weather }) => {
   return (
     <section className="current">
       <h2>Current Weather</h2>
@@ -23,7 +23,7 @@ export const WeatherEntry = ({ weather }) => {
       <div>Wind Speed: {weather.wind_speed}</div>
       {weather.weather.map(condition => (
         <div key={condition.id}>
-          <img src={getIconUrl(condition.icon)} alt={condition.main} />{' '}
+          <img src={getIconUrl(condition.icon, true)} alt={condition.main} />{' '}
           {condition.main} {condition.description}
         </div>
       ))}
@@ -31,6 +31,6 @@ export const WeatherEntry = ({ weather }) => {
   );
 };
 
-WeatherEntry.propTypes = {
+Current.propTypes = {
   weather: PropTypes.shape(),
 };

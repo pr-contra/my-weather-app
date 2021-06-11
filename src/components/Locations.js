@@ -1,12 +1,27 @@
-import React from 'react';
-import PropTypes from 'prop-types';
+import React, { useContext, useCallback } from 'react';
+import { AppStateContext, UserLocationContext } from '../context';
 
-export const Locations = ({
-  handleDeleteClick,
-  locations,
-  setSelectedLocation,
-  userLocation,
-}) => {
+export const Locations = () => {
+  const { userLocation } = useContext(UserLocationContext);
+  const { locations, setLocations, selectedLocation, setSelectedLocation } =
+    useContext(AppStateContext);
+
+  const handleDeleteClick = useCallback(
+    (e, index) => {
+      e.stopPropagation();
+
+      const newLocations = [...locations];
+      const cleanAfterDelete =
+        newLocations[index].name === selectedLocation.name;
+
+      newLocations.splice(index, 1);
+      setLocations([...newLocations]);
+
+      if (cleanAfterDelete) setSelectedLocation();
+    },
+    [locations, setLocations, selectedLocation, setSelectedLocation],
+  );
+
   return (
     <section className="locations">
       <div>
@@ -45,16 +60,4 @@ export const Locations = ({
       </div>
     </section>
   );
-};
-
-Locations.propTypes = {
-  handleDeleteClick: PropTypes.func.isRequired,
-  locations: PropTypes.arrayOf(PropTypes.shape()),
-  setSelectedLocation: PropTypes.func.isRequired,
-  userLocation: PropTypes.shape(),
-};
-
-Locations.defaultProps = {
-  locations: undefined,
-  userLocation: undefined,
 };
