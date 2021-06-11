@@ -1,31 +1,32 @@
-import React, { useContext, useEffect, useState } from 'react';
+import React, { useContext, useEffect } from 'react';
 import { Current } from './Current';
 import { Forecast } from './Forecast';
-import { getWeather } from '../services';
+import { getWeatherByGeoLocationUrl } from '../services';
 import { AppStateContext } from '../context';
+import { useRequest } from '../hooks';
 
 export const Weather = () => {
   const { selectedLocation } = useContext(AppStateContext);
-  const [weather, setWeather] = useState([]);
+  const [weather, doWeatherRequest] = useRequest();
 
   useEffect(() => {
-    (async function () {
-      if (selectedLocation) {
-        await getWeather(selectedLocation).then(data => {
-          setWeather(data);
-        });
-      }
+    if (!selectedLocation) return;
+
+    (async () => {
+      await doWeatherRequest(
+        getWeatherByGeoLocationUrl(selectedLocation.lat, selectedLocation.lon),
+      );
     })();
-  }, [selectedLocation]);
+  }, [selectedLocation, doWeatherRequest]);
 
   return (
     <>
-      {selectedLocation && weather.current && weather.daily && (
+      {selectedLocation && weather.data.current && weather.data.daily && (
         <div>
           <hr />
           <h2>{`Selected Location: ${selectedLocation.name}`}</h2>
-          <Current weather={weather.current} />
-          <Forecast forecast={weather.daily} />
+          <Current weather={weather.data.current} />
+          <Forecast forecast={weather.data.daily} />
         </div>
       )}
     </>

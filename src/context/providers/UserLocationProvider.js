@@ -1,32 +1,32 @@
-import React, { useEffect, useState } from 'react';
+import React, { useEffect } from 'react';
 import PropTypes from 'prop-types';
 import { UserLocationContext } from '../';
-import { useUserGeoLocation } from '../../hooks';
-import { getLocationByCoordinates } from '../../services';
+import { useRequest, useUserGeoLocation } from '../../hooks';
+import { getLocationUrl } from '../../services';
 
 export const UserLocationProvider = ({ children }) => {
   const userGeoLocation = useUserGeoLocation();
-  // const userGeoLocation = useUserGeoLocation(userClicked);
-  const [userLocation, setUserLocation] = useState({});
+  const [userLocation, doUserLocationRequest] = useRequest();
 
   useEffect(() => {
     if (!userGeoLocation.loaded) return;
 
     (async () => {
-      await getLocationByCoordinates(
-        userGeoLocation.coordinates.lat,
-        userGeoLocation.coordinates.lon,
-      ).then(data => {
-        setUserLocation({
-          userLocation: data[0],
-        });
-      });
+      await doUserLocationRequest(
+        getLocationUrl(
+          userGeoLocation.coordinates.lat,
+          userGeoLocation.coordinates.lon,
+        ),
+      );
     })();
-  }, [userGeoLocation]);
+  }, [userGeoLocation, doUserLocationRequest]);
 
   return (
-    <UserLocationContext.Provider value={userLocation}>
-      {children}
+    <UserLocationContext.Provider
+      value={{ userLocation: userLocation.data[0] }}
+    >
+      {userLocation.isLoading && <p>Loading...</p>}
+      {userLocation.loaded && userLocation.data && children}
     </UserLocationContext.Provider>
   );
 };

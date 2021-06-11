@@ -1,37 +1,44 @@
-import { useCallback, useEffect, useReducer, useState } from 'react';
+import { useEffect, useReducer, useState } from 'react';
 
 export const useRequest = () => {
   const [url, setUrl] = useState(null);
-
   const [state, dispatch] = useReducer(requestReducer, {
     ...requestReducer.initialState,
   });
 
-  const fetchUrl = useCallback(async () => {
-    try {
+  useEffect(() => {
+    let abortRequest = false;
+    if (!url) return;
+
+    (async () => {
       dispatch({ type: requestReducer.types.REQUESTED });
 
-      await fetch(url).then(response => {
-        if (!response.ok) {
-          throw new Error('Ups, something on our servers went wrong!');
-        }
+      try {
+        await fetch(url).then(response => {
+          if (!response.ok) {
+            throw new Error('Ups, something on our servers went wrong!');
+          }
 
-        response.json().then(function (data) {
-          dispatch({
-            type: requestReducer.types.RECEIVED,
-            data,
+          response.json().then(function (data) {
+            if (abortRequest) return;
+            dispatch({
+              type: requestReducer.types.RECEIVED,
+              data,
+            });
+            setUrl(null);
           });
         });
-      });
-    } catch (err) {
-      dispatch({ type: requestReducer.types.ERROR });
-    }
-  }, [url]);
+      } catch (err) {
+        if (abortRequest) return;
+        dispatch({ type: requestReducer.types.ERROR });
+        setUrl(null);
+      }
+    })();
 
-  useEffect(() => {
-    if (!url) return;
-    fetchUrl();
-  }, [url, fetchUrl]);
+    return () => {
+      abortRequest = true;
+    };
+  }, [url]);
 
   const doRequest = url => {
     setUrl(url);
@@ -40,7 +47,7 @@ export const useRequest = () => {
   return [state, doRequest];
 };
 
-function requestReducer(state, action) {
+const requestReducer = (state, action) => {
   switch (action.type) {
     case requestReducer.types.REQUESTED:
       return {
@@ -62,9 +69,10 @@ function requestReducer(state, action) {
     default:
       return state;
   }
-}
+};
 
 requestReducer.initialState = {
+  data: [],
   isLoading: false,
   hasError: false,
   loaded: false,

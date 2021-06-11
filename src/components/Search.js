@@ -1,32 +1,35 @@
-import React, { useCallback, useContext, useState } from 'react';
-import { getLocationByName } from '../services';
+import React, { useCallback, useContext, useEffect, useState } from 'react';
+import { getGeoLocationUrl } from '../services';
 import { AppStateContext } from '../context';
+import { useRequest } from '../hooks';
 
 export const Search = () => {
   const { locations, setLocations, setSelectedLocation } =
     useContext(AppStateContext);
   const [searchText, setSearchText] = useState('');
+  const [newLocation, doNewLocationRequest] = useRequest();
 
-  const handleSearchClick = useCallback(async () => {
-    await getLocationByName(searchText)
-      .then(data => {
-        if (locations.find(location => location.name === data[0].name)) {
-          // if (locations.find(location => location.name === searchText)) {
-          setSearchText('');
-          return;
-        }
-        setSelectedLocation(data[0]);
-        setLocations(prevState => [...prevState, data[0]]);
-      })
-      .catch(error => {
-        if (error === 404) {
-          // Trigger Not Found notification
-        }
+  const handleSearchClick = useCallback(() => {
+    if (
+      !searchText ||
+      locations.find(location => location.name === searchText)
+    ) {
+      setSearchText('');
+      return;
+    }
 
-        // if (error !== 200) throw new Error('Something on our servers went wrong!);
-      });
-    setSearchText('');
-  }, [locations, searchText, setSelectedLocation, setLocations]);
+    (async () => {
+      await doNewLocationRequest(getGeoLocationUrl(searchText));
+    })();
+  }, [doNewLocationRequest, locations, searchText]);
+
+  useEffect(() => {
+    if (newLocation.loaded && newLocation.data.length > 0) {
+      setSelectedLocation(newLocation.data[0]);
+      setLocations(prevState => [...prevState, newLocation.data[0]]);
+      setSearchText('');
+    }
+  }, [newLocation, setSelectedLocation, setLocations]);
 
   return (
     <>

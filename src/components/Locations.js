@@ -9,15 +9,14 @@ export const Locations = () => {
   const handleDeleteClick = useCallback(
     (e, index) => {
       e.stopPropagation();
-
       const newLocations = [...locations];
-      const cleanAfterDelete =
-        newLocations[index].name === selectedLocation.name;
+      const hideAfterDelete =
+        selectedLocation && newLocations[index].name === selectedLocation.name;
 
       newLocations.splice(index, 1);
       setLocations([...newLocations]);
 
-      if (cleanAfterDelete) setSelectedLocation();
+      if (hideAfterDelete) setSelectedLocation();
     },
     [locations, setLocations, selectedLocation, setSelectedLocation],
   );

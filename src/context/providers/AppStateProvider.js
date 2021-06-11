@@ -1,4 +1,4 @@
-import React, { useContext, useEffect, useState } from 'react';
+import React, { useContext, useEffect, useMemo, useState } from 'react';
 import PropTypes from 'prop-types';
 import { AppStateContext, UserLocationContext } from '../';
 
@@ -16,15 +16,22 @@ export const AppStateProvider = ({ children }) => {
     [locations],
   );
 
-  // Sets initially selected location as the User's geo location
   useEffect(() => {
     setSelectedLocation(userLocation);
   }, [userLocation]);
 
+  const value = useMemo(
+    () => ({
+      locations,
+      setLocations,
+      selectedLocation,
+      setSelectedLocation,
+    }),
+    [locations, selectedLocation],
+  );
+
   return (
-    <AppStateContext.Provider
-      value={{ locations, setLocations, selectedLocation, setSelectedLocation }}
-    >
+    <AppStateContext.Provider value={value}>
       {children}
     </AppStateContext.Provider>
   );
