@@ -8,6 +8,7 @@ import {
   LocationIcon,
   Section,
 } from './Localizations.styled';
+import { sendToast } from '../utils/toasts';
 
 export const Locations = () => {
   const { addToast } = useToasts();
@@ -23,14 +24,10 @@ export const Locations = () => {
       const showDefaultLocation =
         selectedLocation && newLocations[index].name === selectedLocation.name;
 
-      addToast(`Removed ${newLocations[index].name} with success`, {
-        appearance: 'success',
-        autoDismiss: true,
-        autoDismissTimeout: 5000,
-      });
-
-      newLocations.splice(index, 1);
+      const removed = newLocations.splice(index, 1);
       setLocations([...newLocations]);
+
+      sendToast(addToast, `Removed ${removed[0].name} with success`, 'success');
 
       if (showDefaultLocation) setSelectedLocation(userLocation);
     },

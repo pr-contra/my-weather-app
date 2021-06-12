@@ -4,7 +4,7 @@ import { Forecast } from './Forecast';
 import { getWeatherByGeoLocationUrl } from '../services';
 import { AppStateContext } from '../context';
 import { useRequest } from '../hooks';
-import { LoadingIcon, LoadingWrapper } from './common/styled';
+import { LoadingIcon, LoadingWrapper } from './common';
 
 export const Weather = () => {
   const { selectedLocation } = useContext(AppStateContext);

@@ -3,7 +3,7 @@ import PropTypes from 'prop-types';
 import { UserLocationContext } from '../';
 import { useRequest, useUserGeoLocation } from '../../hooks';
 import { getLocationUrl } from '../../services';
-import { LoadingIcon, LoadingWrapper } from '../../components/common/styled';
+import { LoadingIcon, LoadingWrapper } from '../../components/common';
 
 export const UserLocationProvider = ({ children }) => {
   const userGeoLocation = useUserGeoLocation();

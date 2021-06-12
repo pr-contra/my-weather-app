@@ -6,6 +6,7 @@ export const Toast = ({ type, message }) => {
   console.log(message);
 
   const { addToast } = useToasts();
+
   return (
     <button
       onClick={() =>

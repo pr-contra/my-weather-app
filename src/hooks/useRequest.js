@@ -1,5 +1,6 @@
 import { useEffect, useReducer, useState } from 'react';
 import { useToasts } from 'react-toast-notifications';
+import { sendToast } from '../utils/toasts';
 
 export const useRequest = () => {
   const { addToast } = useToasts();
@@ -38,11 +39,7 @@ export const useRequest = () => {
       } catch (err) {
         if (!abortController.signal.aborted) {
           dispatch({ type: requestReducer.types.ERROR });
-          addToast(`${err}`, {
-            appearance: 'error',
-            autoDismiss: true,
-            autoDismissTimeout: 5000,
-          });
+          sendToast(addToast, `${err}`, 'error');
           setUrl(null);
         }
       }

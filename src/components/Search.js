@@ -5,6 +5,7 @@ import { getGeoLocationUrl } from '../services';
 import { AppStateContext } from '../context';
 import { useRequest } from '../hooks';
 import { Input, InputContainer, SearchButton } from './Search.styled';
+import { sendToast } from '../utils/toasts';
 
 export const Search = () => {
   const { addToast } = useToasts();
@@ -17,11 +18,7 @@ export const Search = () => {
   const handleSearchClick = useCallback(() => {
     if (!searchText) return;
     if (locations.find(location => location.name === searchText)) {
-      addToast(`${searchText} already exists`, {
-        appearance: 'warning',
-        autoDismiss: true,
-        autoDismissTimeout: 5000,
-      });
+      sendToast(addToast, `${searchText} already exists`, 'warning');
       setSearchText('');
       return;
     }
@@ -36,11 +33,11 @@ export const Search = () => {
       setSelectedLocation({ ...newLocation.data[0], isNew: true });
       setLocations(prevState => [...prevState, newLocation.data[0]]);
       setSearchText('');
-      addToast(`Added ${newLocation.data[0].name} with success`, {
-        appearance: 'success',
-        autoDismiss: true,
-        autoDismissTimeout: 5000,
-      });
+      sendToast(
+        addToast,
+        `Added ${newLocation.data[0].name} with success`,
+        'success',
+      );
     }
   }, [addToast, newLocation, setSelectedLocation, setLocations]);
 
@@ -50,11 +47,8 @@ export const Search = () => {
       newLocation.data &&
       newLocation.data.length <= 0
     ) {
-      addToast(`Couldn't find ${searchText}`, {
-        appearance: 'warning',
-        autoDismiss: true,
-        autoDismissTimeout: 5000,
-      });
+      sendToast(addToast, `Couldn't find ${searchText}`, 'warning');
+
       setSearchText('');
       return;
     }
