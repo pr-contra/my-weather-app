@@ -1,33 +1,34 @@
-import React from 'react';
+import React, { useContext } from 'react';
 import PropTypes from 'prop-types';
 import { getIconUrl } from '../services';
-import { convertUnixTimeToDate } from '../utils/time';
+import { AppStateContext } from '../context';
+import { getFormattedFullDate } from '../utils/time';
+import {
+  CurrentTemp,
+  Img,
+  H1,
+  H2,
+  Section,
+  Status,
+  Temperature,
+} from './Current.styled';
 
 export const Current = ({ weather }) => {
+  const { selectedLocation } = useContext(AppStateContext);
+
   return (
-    <section className="current">
-      <h2>Current Weather</h2>
-      <div>Date: {convertUnixTimeToDate(weather.dt)}</div>
-      <div>Sunrise: {convertUnixTimeToDate(weather.sunrise)}</div>
-      <div>Sunset: {convertUnixTimeToDate(weather.sunset)}</div>
-      <div>
-        <strong>Current Temp:{weather.temp}°C</strong>
-      </div>
-      <div>
-        <strong>Feels like: {weather.feels_like}°C</strong>
-      </div>
-      <div>Humidity: {weather.humidity}%</div>
-      <div>Pressure: {weather.pressure}hPa</div>
-      <div>Uvi: {weather.uvi}</div>
-      <div>Visibility: {weather.visibility}</div>
-      <div>Wind Speed: {weather.wind_speed}</div>
-      {weather.weather.map(condition => (
-        <div key={condition.id}>
-          <img src={getIconUrl(condition.icon, true)} alt={condition.main} />{' '}
-          {condition.main} {condition.description}
-        </div>
-      ))}
-    </section>
+    <Section>
+      <H1>{`${selectedLocation.name} - ${selectedLocation.country}`}</H1>
+      <H2>{getFormattedFullDate(weather.dt)}</H2>
+      <CurrentTemp key={weather.weather[0].id}>
+        <Img
+          src={getIconUrl(weather.weather[0].icon, true)}
+          alt={weather.weather[0].main}
+        />
+        <Temperature>{Math.round(weather.temp)}°C</Temperature>
+        <Status>{weather.weather[0].main}</Status>
+      </CurrentTemp>
+    </Section>
   );
 };
 

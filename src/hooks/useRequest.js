@@ -1,44 +1,57 @@
 import { useEffect, useReducer, useState } from 'react';
+import { useToasts } from 'react-toast-notifications';
 
 export const useRequest = () => {
-  const [url, setUrl] = useState(null);
+  const { addToast } = useToasts();
+  const [url, setUrl] = useState(undefined);
   const [state, dispatch] = useReducer(requestReducer, {
     ...requestReducer.initialState,
   });
 
   useEffect(() => {
-    let abortRequest = false;
+    const abortController = new AbortController();
     if (!url) return;
 
     (async () => {
       dispatch({ type: requestReducer.types.REQUESTED });
 
       try {
-        await fetch(url).then(response => {
+        await fetch(url, {
+          signal: abortController.signal,
+        }).then(response => {
           if (!response.ok) {
-            throw new Error('Ups, something on our servers went wrong!');
+            throw new Error(
+              `Ups, something went wrong! code: ${response.status}`,
+            );
           }
 
           response.json().then(function (data) {
-            if (abortRequest) return;
-            dispatch({
-              type: requestReducer.types.RECEIVED,
-              data,
-            });
-            setUrl(null);
+            if (!abortController.signal.aborted) {
+              dispatch({
+                type: requestReducer.types.RECEIVED,
+                data,
+              });
+              setUrl(null);
+            }
           });
         });
       } catch (err) {
-        if (abortRequest) return;
-        dispatch({ type: requestReducer.types.ERROR });
-        setUrl(null);
+        if (!abortController.signal.aborted) {
+          dispatch({ type: requestReducer.types.ERROR });
+          addToast(`${err}`, {
+            appearance: 'error',
+            autoDismiss: true,
+            autoDismissTimeout: 5000,
+          });
+          setUrl(null);
+        }
       }
     })();
 
     return () => {
-      abortRequest = true;
+      abortController.abort();
     };
-  }, [url]);
+  }, [addToast, url]);
 
   const doRequest = url => {
     setUrl(url);
@@ -47,32 +60,37 @@ export const useRequest = () => {
   return [state, doRequest];
 };
 
-const requestReducer = (state, action) => {
+const requestReducer = (state = requestReducer.initialState, action) => {
   switch (action.type) {
     case requestReducer.types.REQUESTED:
       return {
-        ...state,
+        ...requestReducer.initialState,
         isLoading: true,
         hasError: false,
         loaded: false,
       };
     case requestReducer.types.RECEIVED:
       return {
-        ...state,
+        ...requestReducer.initialState,
         data: action.data,
         isLoading: false,
         hasError: false,
         loaded: true,
       };
     case requestReducer.types.ERROR:
-      return { ...state, isLoading: false, hasError: true, loaded: true };
+      return {
+        ...requestReducer.initialState,
+        isLoading: false,
+        hasError: true,
+        loaded: true,
+      };
     default:
       return state;
   }
 };
 
 requestReducer.initialState = {
-  data: [],
+  data: undefined,
   isLoading: false,
   hasError: false,
   loaded: false,

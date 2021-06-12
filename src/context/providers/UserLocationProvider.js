@@ -3,6 +3,7 @@ import PropTypes from 'prop-types';
 import { UserLocationContext } from '../';
 import { useRequest, useUserGeoLocation } from '../../hooks';
 import { getLocationUrl } from '../../services';
+import { LoadingIcon, LoadingWrapper } from '../../components/common/styled';
 
 export const UserLocationProvider = ({ children }) => {
   const userGeoLocation = useUserGeoLocation();
@@ -22,12 +23,23 @@ export const UserLocationProvider = ({ children }) => {
   }, [userGeoLocation, doUserLocationRequest]);
 
   return (
-    <UserLocationContext.Provider
-      value={{ userLocation: userLocation.data[0] }}
-    >
-      {userLocation.isLoading && <p>Loading...</p>}
-      {userLocation.loaded && userLocation.data && children}
-    </UserLocationContext.Provider>
+    <>
+      {(!userGeoLocation.loaded || userLocation.isLoading) && (
+        <LoadingWrapper>
+          <LoadingIcon />
+        </LoadingWrapper>
+      )}
+      {userLocation.loaded && userLocation.data && (
+        <UserLocationContext.Provider
+          value={{
+            userLocation: userLocation.data[0],
+            accepted: userGeoLocation.accepted,
+          }}
+        >
+          {children}
+        </UserLocationContext.Provider>
+      )}
+    </>
   );
 };
 

@@ -14,6 +14,7 @@ export const useUserGeoLocation = () => {
         lat: location.coords.latitude,
         lon: location.coords.longitude,
       },
+      accepted: true,
       loaded: true,
     });
   };
