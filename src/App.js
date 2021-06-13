@@ -4,15 +4,13 @@ import { Locations, Search, Weather } from './components';
 
 const App = () => {
   return (
-    <>
-      <Container>
-        <Section>
-          <Search />
-          <Locations />
-        </Section>
-        <Weather />
-      </Container>
-    </>
+    <Container>
+      <Section>
+        <Search />
+        <Locations />
+      </Section>
+      <Weather />
+    </Container>
   );
 };
 
