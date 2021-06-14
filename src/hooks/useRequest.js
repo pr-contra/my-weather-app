@@ -1,6 +1,5 @@
 import { useEffect, useReducer, useState } from 'react';
 import { useToasts } from 'react-toast-notifications';
-import { sendToast } from '../utils/toasts';
 
 export const useRequest = () => {
   const { addToast } = useToasts();
@@ -38,8 +37,7 @@ export const useRequest = () => {
         });
       } catch (err) {
         if (!abortController.signal.aborted) {
-          dispatch({ type: requestReducer.types.ERROR });
-          sendToast(addToast, `${err}`, 'error');
+          dispatch({ type: requestReducer.types.ERROR, error: err });
           setUrl(null);
         }
       }
@@ -77,6 +75,7 @@ const requestReducer = (state = requestReducer.initialState, action) => {
     case requestReducer.types.ERROR:
       return {
         ...requestReducer.initialState,
+        error: action.error,
         isLoading: false,
         hasError: true,
         loaded: true,

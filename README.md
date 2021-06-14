@@ -1,4 +1,4 @@
-# my-weather-app
+# Weather App
 
 Simple weather app created with React JS
 
@@ -13,7 +13,7 @@ Simple weather app created with React JS
 
 1. This project makes requests to [OpenWeather API](https://openweathermap.org/)
    so you will need to create an account and generate an API_KEY;
-   1.1 - Once you have generated this key add it `.env` file (preferably to `.env.local`);
+   1.1 - Once you have generated this key add it to `.env` file (preferably to `.env.local`);
 
    ```bash
     REACT_APP_API_KEY=<add-your-api-key-here>
@@ -29,8 +29,8 @@ In this project you are able to:
 
 - Get current weather and 7-day forecast in your location (if geolocation permissions provided):
   - **OpenWeatherMap API only allows 7-day forecast on free-plans**;
-  - If user doesn't grant gelocation permission, gets the weather for the default coordinates;
-- User can search for as many cities ashe would like to:
+  - If user doesn't grant geolocation permission, gets the weather for the default coordinates;
+- User can search for as many cities as he would like to:
   - This cities will be saved as localStorage;
   - This cities can be deleted;
 - The user will receive notifications for the given situations:
@@ -38,7 +38,6 @@ In this project you are able to:
   - When a city is deleted;
   - When the searched city already was added;
   - When the typed text doesn't correspond to a valid city;
-  - When there is a server error;
 
 ### Project stack
 

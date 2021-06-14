@@ -3,7 +3,12 @@ import PropTypes from 'prop-types';
 import { UserLocationContext } from '../';
 import { useRequest, useUserGeoLocation } from '../../hooks';
 import { getLocationUrl } from '../../services';
-import { LoadingIcon, LoadingWrapper } from '../../components/common';
+import {
+  LoadingIcon,
+  LoadingWrapper,
+  ErrorMessage,
+  ErrorWrapper,
+} from '../../components/common';
 
 export const UserLocationProvider = ({ children }) => {
   const userGeoLocation = useUserGeoLocation();
@@ -22,8 +27,23 @@ export const UserLocationProvider = ({ children }) => {
     })();
   }, [userGeoLocation, doUserLocationRequest]);
 
+  console.log(userGeoLocation);
+
   return (
     <>
+      {userLocation.hasError && (
+        <ErrorWrapper>
+          <ErrorMessage>
+            {`This project requires a valid API_KEY. Check`}
+            <a
+              href="https://openweathermap.org/"
+              target="_blank"
+              rel="noreferrer"
+            >{` https://openweathermap.org/`}</a>
+            {` for more information`}
+          </ErrorMessage>
+        </ErrorWrapper>
+      )}
       {(!userGeoLocation.loaded || userLocation.isLoading) && (
         <LoadingWrapper>
           <LoadingIcon />

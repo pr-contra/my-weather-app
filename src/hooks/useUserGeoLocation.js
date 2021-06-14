@@ -1,7 +1,6 @@
 import { useEffect, useState } from 'react';
 import { DEFAULT_LAT, DEFAULT_LON } from '../utils';
 
-// export const useUserGeoLocation = (userClicked) => {
 export const useUserGeoLocation = () => {
   const [location, setLocation] = useState({
     coordinates: { lat: '', lon: '' },
@@ -47,7 +46,6 @@ export const useUserGeoLocation = () => {
           onError();
       }
     });
-    // }, [userClicked]);
   }, []);
 
   return location;
